@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import AddTodoComponent from "../components/AddTodoComponent"
-import { FaArrowAltCircleRight, FaClosedCaptioning, FaTimes } from "react-icons/fa";
+import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaClosedCaptioning, FaTimes } from "react-icons/fa";
 
 function Todos() {
 
@@ -10,15 +10,16 @@ function Todos() {
         setTodos([...todos, newTodo]);
     }
 
-    const removeItem = (itemId) =>{
-        console.log(itemId);
+    const removeItem = (itemId) => {
+        const updatedTodos = todos.filter(todo => todo.id !== itemId);
+        setTodos(updatedTodos);
     }
 
-    const updateItemStatus = (itemId) => {
-        const updatedTodos = [...todos];
-        const updatedTodoItem = updatedTodos.findIndex(todo => todo.id == itemIt);
-        
-        
+    const updateItemStatus = (itemId, status) => {
+        const updatedTodos = todos.map(todo =>
+            todo.id === itemId ? { ...todo, status: status } : todo
+        );
+        setTodos(updatedTodos);
     }
 
     const pendingTodos = todos.filter((todo) => todo.status == 0);
@@ -46,10 +47,10 @@ function Todos() {
                                                 {item.subject}
                                             </p>
                                             <div>
-                                                <button className="btn btn-sm btn-info text-white me-2" onClick={()=>updateItemStatus(item.id)}>
+                                                <button className="btn btn-sm btn-info text-white me-2" onClick={() => updateItemStatus(item.id, 1)}>
                                                     <FaArrowAltCircleRight />
                                                 </button>
-                                                <button className="btn btn-sm btn-danger text-white" onClick={()=>removeItem(item.id)}>
+                                                <button className="btn btn-sm btn-danger text-white" onClick={() => removeItem(item.id)}>
                                                     <FaTimes />
                                                 </button>
                                             </div>
@@ -67,15 +68,18 @@ function Todos() {
                             {
                                 inProgressTodos.length > 0 ?
                                     inProgressTodos.map((item, index) => (
-                                        <li className="list-group-item" key={index}>
+                                        <li className="list-group-item d-flex justify-content-between align-items-center" key={index}>
                                             <p>
                                                 {item.subject}
                                             </p>
                                             <div>
-                                                <button className="btn btn-sm btn-info text-white me-2">
+                                                <button className="btn btn-sm btn-warning text-white me-2" onClick={() => updateItemStatus(item.id, 0)}>
+                                                    <FaArrowAltCircleLeft />
+                                                </button>
+                                                <button className="btn btn-sm btn-info text-white me-2" onClick={() => updateItemStatus(item.id, 2)}>
                                                     <FaArrowAltCircleRight />
                                                 </button>
-                                                <button className="btn btn-sm btn-danger text-white">
+                                                <button className="btn btn-sm btn-danger text-white" onClick={() => removeItem(item.id)}>
                                                     <FaTimes />
                                                 </button>
                                             </div>
@@ -93,15 +97,15 @@ function Todos() {
                             {
                                 doneTodos.length > 0 ?
                                     doneTodos.map((item, index) => (
-                                        <li className="list-group-item" key={index}>
+                                        <li className="list-group-item d-flex justify-content-between align-items-center" key={index}>
                                             <p>
                                                 {item.subject}
                                             </p>
                                             <div>
-                                                <button className="btn btn-sm btn-info text-white me-2">
-                                                    <FaArrowAltCircleRight />
+                                                <button className="btn btn-sm btn-info text-white me-2" onClick={() => updateItemStatus(item.id, 1)}>
+                                                    <FaArrowAltCircleLeft />
                                                 </button>
-                                                <button className="btn btn-sm btn-danger text-white">
+                                                <button className="btn btn-sm btn-danger text-white" onClick={() => removeItem(item.id)}>
                                                     <FaTimes />
                                                 </button>
                                             </div>
@@ -113,6 +117,19 @@ function Todos() {
                                     </li>
                             }
                         </ul>
+                    </div>
+                </div>
+            </div>
+            <div className="alert alert-info mt-4">
+                <div className="row">
+                    <div className="col-md-4">
+                    Görüləcək işlər: <strong>{pendingTodos.length}</strong>
+                    </div>
+                    <div className="col-md-4">
+                    Davam edən: <strong>{inProgressTodos.length}</strong>
+                    </div>
+                    <div className="col-md-4">
+                    Tamamlanmış: <strong>{doneTodos.length}</strong>
                     </div>
                 </div>
             </div>
